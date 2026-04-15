@@ -39,6 +39,9 @@ const DIAS_SEMANA = [
   { value: "dom", label: "Domingo" },
 ];
 
+const weekDays = DIAS_SEMANA.map(d => d.value);
+const weekDayLabels = Object.fromEntries(DIAS_SEMANA.map(d => [d.value, d.label]));
+
 const MOTIVOS_BLOQUEIO = [
   { value: "feriado", label: "🎉 Feriado" },
   { value: "almoco", label: "🍽️ Almoço" },
