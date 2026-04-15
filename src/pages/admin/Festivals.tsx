@@ -162,7 +162,7 @@ function ChoreographyManagement({
       }
    });
 
-   if (isLoadingEnrollments) return <Skeleton className="h-64 rounded-[2rem]" />;
+   if (isLoading || isLoadingEnrollments) return <Skeleton className="h-64 rounded-[2rem]" />;
 
    return (
       <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
@@ -335,7 +335,7 @@ function CostManagement({
       }
    });
 
-   if (isLoading) return <Skeleton className="h-64 rounded-[2rem]" />;
+   if (isLoading || isLoadingEnrollments) return <Skeleton className="h-64 rounded-[2rem]" />;
 
    const totalCosts = costs.reduce((sum, c) => sum + Number(c.amount), 0);
 
@@ -518,8 +518,6 @@ function ParticipantManagement({
    const [selectedPackageId, setSelectedPackageId] = useState('');
    const [selectedStatus, setSelectedStatus] = useState<string>('ativo');
 
-   if (isLoadingEnrollments) return <Skeleton className="h-64 rounded-[2rem]" />;
-
    const enrollStudentMutation = useMutation({
       mutationFn: async ({ studentId, packageId }: { studentId: string, packageId: string }) => {
          const { data, error } = await supabase.rpc('process_festival_sale_v3', {
@@ -676,7 +674,7 @@ function ParticipantManagement({
       }
    });
 
-   if (isLoading) return <Skeleton className="h-64 rounded-[2rem]" />;
+   if (isLoading || isLoadingEnrollments) return <Skeleton className="h-64 rounded-[2rem]" />;
 
    return (
       <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
@@ -1499,7 +1497,7 @@ function ItemManagement({ festivalId, studioId }: { festivalId: string, studioId
       onError: (err: any) => toast.error("Erro ao remover", { description: err.message })
    });
 
-   if (isLoading) return <Skeleton className="h-64 rounded-[2rem]" />;
+   if (isLoading || isLoadingEnrollments) return <Skeleton className="h-64 rounded-[2rem]" />;
 
    return (
       <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
@@ -1986,7 +1984,7 @@ function TicketManagement({ festivalId, studioId, capacityLimit, currentTickets 
       onError: (err: any) => toast.error("Falha na validação", { description: err.message })
    });
 
-   if (isLoading) return <Skeleton className="h-64 rounded-[2rem]" />;
+   if (isLoading || isLoadingEnrollments) return <Skeleton className="h-64 rounded-[2rem]" />;
 
    const filteredTickets = tickets.filter((t: any) =>
       t.students?.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
