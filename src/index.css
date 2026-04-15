@@ -1,0 +1,95 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 140 20% 98%;
+    --foreground: 150 25% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 150 25% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 150 25% 10%;
+
+    --primary: 152 45% 42%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 145 20% 94%;
+    --secondary-foreground: 150 25% 15%;
+
+    --muted: 140 15% 95%;
+    --muted-foreground: 150 10% 45%;
+
+    --accent: 168 40% 90%;
+    --accent-foreground: 168 45% 25%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 145 15% 90%;
+    --input: 145 15% 90%;
+    --ring: 152 45% 42%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 150 20% 12%;
+    --sidebar-foreground: 140 15% 85%;
+    --sidebar-primary: 152 45% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 150 18% 18%;
+    --sidebar-accent-foreground: 140 15% 90%;
+    --sidebar-border: 150 15% 20%;
+    --sidebar-ring: 152 45% 50%;
+
+    --success: 152 60% 45%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    --info: 210 80% 55%;
+    --info-foreground: 0 0% 100%;
+
+    --chart-1: 152 45% 42%;
+    --chart-2: 168 40% 50%;
+    --chart-3: 38 92% 50%;
+    --chart-4: 210 80% 55%;
+    --chart-5: 280 60% 55%;
+  }
+
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-body-override, 'Plus Jakarta Sans'), sans-serif;
+    font-size: var(--font-size-override, 1rem);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-title-override, 'Plus Jakarta Sans'), sans-serif;
+  }
+}
+
+@layer utilities {
+  .animate-pulse-subtle {
+    animation: pulse-subtle 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes pulse-subtle {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.95;
+      transform: scale(1.01);
+    }
+  }
+}

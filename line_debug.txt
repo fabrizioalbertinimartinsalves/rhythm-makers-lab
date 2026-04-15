@@ -1,0 +1,10 @@
+                         <Label className="text-[10px] uppercase font-bold text-slate-400 tracking-widest">Forma de Pagamento Preferencial</Label>
+                         <Select value={matriculaForm.forma_pagamento} onValueChange={v => setMatriculaForm({...matriculaForm, forma_pagamento: v})}>
+                            <SelectTrigger className="h-11 rounded-xl bg-white border-none font-medium shadow-sm"><SelectValue /></SelectTrigger>
+                            <SelectContent className="rounded-xl border-none shadow-xl">
+                               <SelectItem value="pix">PIX</SelectItem>
+                               <SelectItem value="cartao">Cartão de Crédito</SelectItem>
+                               <SelectItem value="dinheiro">Dinheiro</SelectItem>
+                               <SelectItem value="boleto">Boleto Bancário</SelectItem>
+                            </SelectContent>
+                         </Select>

@@ -1,0 +1,58 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Dependencies
+node_modules
+.DS_Store
+dist
+dist-ssr
+*.local
+backups/
+.agents/
+.firebase/
+y/
+.temp_migration/
+
+# Sensitive Files
+.env
+kineosapp-*.json
+google-services.json
+
+# Large Files and Databases
+*.sql
+*.tar.gz
+.temp_migration/
+
+# Large Assets and Screenshots
+Gemini_Generated_Image_*
+Adobe Express - file*
+Design sem nome.png
+Screenshot_*
+logo*.png
+logo*.PNG
+kineos.PNG
+
+# Android
+.gradle/
+build/
+captures/
+android/wrapper/
+*.iml
+local.properties
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
