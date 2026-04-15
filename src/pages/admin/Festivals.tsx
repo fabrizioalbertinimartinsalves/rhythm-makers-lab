@@ -703,7 +703,7 @@ function ParticipantManagement({
                            <div className="flex items-center gap-4">
                               <div className="h-16 w-16 rounded-2xl bg-slate-50 overflow-hidden flex-shrink-0 border-2 border-white shadow-md ring-1 ring-slate-100">
                                  {enr.students?.foto_url ? (
-                                    <img src={enr.students.foto_url} className="h-full w-full object-cover" />
+                                    <img src={enr.students.foto_url} alt="Foto Aluno" className="h-full w-full object-cover" />
                                  ) : (
                                     <div className="h-full w-full flex items-center justify-center bg-primary/5 text-primary text-xl font-black">
                                        {enr.students?.nome?.slice(0, 2).toUpperCase()}
@@ -812,7 +812,7 @@ function ParticipantManagement({
                            <div className="flex items-center gap-3">
                               <div className="h-10 w-10 rounded-xl bg-white shadow-sm overflow-hidden flex items-center justify-center">
                                  {selectedStudent.foto_url ? (
-                                    <img src={selectedStudent.foto_url} className="h-full w-full object-cover" />
+                                    <img src={selectedStudent.foto_url} alt="Foto Aluno" className="h-full w-full object-cover" />
                                  ) : (
                                     <span className="text-xs font-black text-primary">{selectedStudent.nome.slice(0, 2).toUpperCase()}</span>
                                  )}

@@ -1155,6 +1155,7 @@ export default function Schedule() {
                       </p>
                    </div>
                    <button 
+                     aria-label="Fechar"
                      onClick={() => setDetailsOpen(false)}
                      className="h-10 w-10 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10 hover:bg-white/10 transition-colors"
                    >
