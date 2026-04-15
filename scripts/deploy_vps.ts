@@ -1,4 +1,4 @@
-﻿/**
+/**
  * SCRIPT AUTÃ”NOMO DE DEPLOYMENT
  * 
  * Esse script pega a sua pasta recÃ©m-compilada "dist" e transfere
@@ -17,7 +17,7 @@ async function deploy() {
     // 1. Conectando na VPS com a senha que vocÃª providenciou
     await ssh.connect({
       host: '95.111.250.154',
-      username: 'root',
+      username: 'famahost',
       password: process.env.VPS_ROOT_PASSWORD // Senha fornecida
     });
     console.log('âœ… SSH Conectado com Sucesso!');
