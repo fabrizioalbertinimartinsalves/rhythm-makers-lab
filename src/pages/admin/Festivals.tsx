@@ -105,11 +105,13 @@ const FESTIVAL_STATUS = [
 function ChoreographyManagement({
    festivalId,
    studioId,
-   enrollments
+   enrollments,
+   isLoadingEnrollments
 }: {
    festivalId: string,
    studioId: string,
-   enrollments: any[]
+   enrollments: any[],
+   isLoadingEnrollments?: boolean
 }) {
    const queryClient = useQueryClient();
    const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -279,11 +281,13 @@ function ChoreographyManagement({
 function CostManagement({
    festivalId,
    studioId,
-   activeTab
+   activeTab,
+   isLoadingEnrollments
 }: {
    festivalId: string,
    studioId: string,
-   activeTab: string
+   activeTab: string,
+   isLoadingEnrollments?: boolean
 }) {
    const queryClient = useQueryClient();
    const [isAddCostOpen, setIsAddCostOpen] = useState(false);
@@ -450,7 +454,7 @@ function CostManagement({
                   <div className="grid grid-cols-2 gap-4">
                      <div>
                         <Input
-                           type="number"
+                           type="number" title="Quantidade" aria-label="Quantidade"
                            placeholder="Valor"
                            className="rounded-2xl h-12 border-slate-100 bg-slate-50/50"
                            value={newCost.amount}
@@ -673,8 +677,7 @@ function ParticipantManagement({
          toast.error("Erro ao excluir inscrição", { description: err.message });
       }
    });
-
-   if (isLoading || isLoadingEnrollments) return <Skeleton className="h-64 rounded-[2rem]" />;
+   if (isLoadingPackages || isLoadingEnrollments) return <Skeleton className="h-64 rounded-[2rem]" />;
 
    return (
       <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
@@ -1206,7 +1209,7 @@ function PackageManagement({
                      <div>
                         <label className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1 mb-2 block">Valor Total</label>
                         <Input
-                           type="number"
+                           type="number" title="Quantidade" aria-label="Quantidade"
                            className="rounded-2xl h-12 border-slate-100 bg-slate-50/50 font-black text-lg"
                            value={newPackage.total_amount}
                            onChange={(e) => setNewPackage(prev => ({ ...prev, total_amount: Number(e.target.value) }))}
@@ -1215,7 +1218,7 @@ function PackageManagement({
                      <div>
                         <label className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1 mb-2 block">Parcelas Máx.</label>
                         <Input
-                           type="number"
+                           type="number" title="Quantidade" aria-label="Quantidade"
                            className="rounded-2xl h-12 border-slate-100 bg-slate-50/50 font-black text-lg"
                            value={newPackage.max_installments}
                            onChange={(e) => setNewPackage(prev => ({ ...prev, max_installments: Number(e.target.value) }))}
@@ -1268,7 +1271,7 @@ function PackageManagement({
                         <div>
                            <label className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1 mb-2 block">Valor Total</label>
                            <Input
-                              type="number"
+                              type="number" title="Quantidade" aria-label="Quantidade"
                               className="rounded-2xl h-12 border-slate-100 bg-slate-50/50 font-black text-lg"
                               value={selectedPackage?.total_amount}
                               onChange={(e) => setSelectedPackage((prev: any) => ({ ...prev, total_amount: Number(e.target.value) }))}
@@ -1277,7 +1280,7 @@ function PackageManagement({
                         <div>
                            <label className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1 mb-2 block">Parc. Máx.</label>
                            <Input
-                              type="number"
+                              type="number" title="Quantidade" aria-label="Quantidade"
                               className="rounded-2xl h-12 border-slate-100 bg-slate-50/50 font-black text-lg"
                               value={selectedPackage?.max_installments}
                               onChange={(e) => setSelectedPackage((prev: any) => ({ ...prev, max_installments: Number(e.target.value) }))}
@@ -1338,15 +1341,16 @@ function PackageManagement({
                                  </div>
                                  <div className="min-w-0 flex-1">
                                     <p className="font-black uppercase text-[10px] tracking-tight text-slate-700 truncate">{inc.festival_available_items.name}</p>
-                                    <div className="flex items-center gap-1.5 mt-0.5">
+                                    <label className="flex items-center gap-1.5 mt-0.5" htmlFor={`qty-${inc.festival_available_items.id}`}>
                                        <span className="text-[8px] font-black uppercase text-slate-300">Qtd:</span>
                                        <input
-                                          type="number"
+                                          id={`qty-${inc.festival_available_items.id}`}
+                                          type="number" title="Quantidade" aria-label="Quantidade"
                                           className="w-10 h-5 rounded border-slate-100 bg-slate-50 text-[10px] font-black text-center focus:ring-1 focus:ring-indigo-500"
                                           defaultValue={inc.quantity}
                                           onBlur={(e) => addInclusionMutation.mutate({ packageId: selectedPackage.id, itemId: inc.festival_available_items.id, quantity: Number(e.target.value) })}
                                        />
-                                    </div>
+                                    </label>
                                  </div>
                               </div>
                               <Button
@@ -1394,7 +1398,15 @@ function PackageManagement({
    );
 }
 
-function ItemManagement({ festivalId, studioId }: { festivalId: string, studioId: string }) {
+function ItemManagement({ 
+   festivalId, 
+   studioId,
+   isLoadingEnrollments 
+}: { 
+   festivalId: string, 
+   studioId: string,
+   isLoadingEnrollments: boolean 
+}) {
    const queryClient = useQueryClient();
    const [isAddItemOpen, setIsAddItemOpen] = useState(false);
    const [editingItem, setEditingItem] = useState<any>(null);
@@ -1620,7 +1632,7 @@ function ItemManagement({ festivalId, studioId }: { festivalId: string, studioId
                   <div>
                      <label className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1 mb-2 block">Capacidade Total / Estoque (Opcional)</label>
                      <Input
-                        type="number"
+                        type="number" title="Quantidade" aria-label="Quantidade"
                         placeholder="Ilimitado se vazio"
                         className="rounded-2xl h-12 border-slate-100 bg-slate-50/50"
                         value={newItem.total_capacity}
@@ -1664,7 +1676,68 @@ function ItemManagement({ festivalId, studioId }: { festivalId: string, studioId
    );
 }
 
-function TicketManagement({ festivalId, studioId, capacityLimit, currentTickets }: { festivalId: string, studioId: string, capacityLimit: number, currentTickets: number }) {
+function ShareTicketAction({ ticket, festivalName, venueName }: { ticket: any; festivalName?: string; venueName?: string }) {
+   const [copied, setCopied] = useState(false);
+   const student = ticket?.students || ticket?.festival_enrollments?.students;
+   const phoneNumber = student?.telefone?.replace(/\D/g, "");
+   const shareUrl = window.location.host + "/ticket/" + ticket.id;
+
+   const handleCopy = () => {
+      navigator.clipboard.writeText("https://" + shareUrl);
+      setCopied(true);
+      toast.success("Link copiado!");
+      setTimeout(() => setCopied(false), 2000);
+   };
+
+   const shareWhatsApp = () => {
+      if (!phoneNumber) {
+         toast.error("Número de telefone não encontrado.");
+         return;
+      }
+
+      const message = encodeURIComponent(
+         "Olá " + (student?.nome || "") + "! 🎟️  Aqui está o seu ingresso digital para o " + (festivalName || "Evento") + " no " + (venueName || "local do evento") + ".\n\nAcesse seu passaporte aqui: https://" + shareUrl + "\n\nNos vemos lá!"
+      );
+      window.open("https://wa.me/55" + phoneNumber + "?text=" + message, "_blank");
+   };
+
+   return (
+      <div className="flex gap-2 flex-1">
+         <Button
+            variant="ghost"
+            onClick={handleCopy}
+            className="h-10 flex-1 rounded-xl font-bold uppercase text-[10px] text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 transition-all font-black gap-2 px-0"
+         >
+            {copied ? <Check className="h-3.5 w-3.5 text-emerald-500" /> : <Copy className="h-3.5 w-3.5" />}
+            Link
+         </Button>
+
+         <Button
+            variant="ghost"
+            disabled={!phoneNumber}
+            onClick={shareWhatsApp}
+            className="h-10 flex-1 rounded-xl font-bold uppercase text-[10px] text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all font-black gap-2 px-0 disabled:opacity-30"
+         >
+            <Phone className="h-3.5 w-3.5" />
+            WhatsApp
+         </Button>
+      </div>
+   );
+}
+
+function TicketManagement({ 
+   festivalId, 
+   studioId, 
+   capacityLimit, 
+   currentTickets,
+   isLoadingEnrollments 
+}: { 
+   festivalId: string, 
+   studioId: string, 
+   capacityLimit: number, 
+   currentTickets: number,
+   isLoadingEnrollments?: boolean
+}) {
    const queryClient = useQueryClient();
    const [isScannerOpen, setIsScannerOpen] = useState(false);
    const [isSaleDialogOpen, setIsSaleDialogOpen] = useState(false);
@@ -2222,7 +2295,7 @@ function TicketManagement({ festivalId, studioId, capacityLimit, currentTickets 
                      <div>
                         <label className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1 mb-2 block">Quantidade</label>
                         <Input
-                           type="number"
+                           type="number" title="Quantidade" aria-label="Quantidade"
                            className="rounded-2xl h-12 border-slate-100 bg-slate-50/50 font-black text-lg"
                            value={saleForm.quantity}
                            onChange={(e) => setSaleForm(prev => ({ ...prev, quantity: Number(e.target.value) }))}
@@ -2402,54 +2475,6 @@ function TicketDesigner({ festival, studioId }: { festival: any, studioId: strin
    );
 }
 
-function ShareTicketAction({ ticket, festivalName, venueName }: { ticket: any; festivalName?: string; venueName?: string }) {
-   const [copied, setCopied] = useState(false);
-   const student = ticket?.students || ticket?.festival_enrollments?.students;
-   const phoneNumber = student?.telefone?.replace(/\D/g, "");
-   const shareUrl = window.location.host + "/ticket/" + ticket.id;
-
-   const handleCopy = () => {
-      navigator.clipboard.writeText("https://" + shareUrl);
-      setCopied(true);
-      toast.success("Link copiado!");
-      setTimeout(() => setCopied(false), 2000);
-   };
-
-   const shareWhatsApp = () => {
-      if (!phoneNumber) {
-         toast.error("Número de telefone não encontrado.");
-         return;
-      }
-
-      const message = encodeURIComponent(
-         "Olá " + (student?.nome || "") + "! 🎟️  Aqui está o seu ingresso digital para o " + (festivalName || "Evento") + " no " + (venueName || "local do evento") + ".\n\nAcesse seu passaporte aqui: https://" + shareUrl + "\n\nNos vemos lá!"
-      );
-      window.open("https://wa.me/55" + phoneNumber + "?text=" + message, "_blank");
-   };
-
-   return (
-      <div className="flex gap-2 flex-1">
-         <Button
-            variant="ghost"
-            onClick={handleCopy}
-            className="h-10 flex-1 rounded-xl font-bold uppercase text-[10px] text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 transition-all font-black gap-2 px-0"
-         >
-            {copied ? <Check className="h-3.5 w-3.5 text-emerald-500" /> : <Copy className="h-3.5 w-3.5" />}
-            Link
-         </Button>
-
-         <Button
-            variant="ghost"
-            disabled={!phoneNumber}
-            onClick={shareWhatsApp}
-            className="h-10 flex-1 rounded-xl font-bold uppercase text-[10px] text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all font-black gap-2 px-0 disabled:opacity-30"
-         >
-            <Phone className="h-3.5 w-3.5" />
-            WhatsApp
-         </Button>
-      </div>
-   );
-}
 
 export default function Festivals() {
    const { studioId } = useAuth();
@@ -2902,7 +2927,11 @@ export default function Festivals() {
                               </TabsContent>
 
                               <TabsContent value="items">
-                                 <ItemManagement festivalId={selectedFestivalId!} studioId={studioId!} />
+                                 <ItemManagement 
+                                    festivalId={selectedFestivalId!} 
+                                    studioId={studioId!} 
+                                    isLoadingEnrollments={isLoadingEnrollments}
+                                 />
                               </TabsContent>
 
                               <TabsContent value="tickets">
@@ -2911,6 +2940,7 @@ export default function Festivals() {
                                     studioId={studioId!}
                                     capacityLimit={selectedFestival.total_tickets_limit}
                                     currentTickets={ticketsCount}
+                                    isLoadingEnrollments={isLoadingEnrollments}
                                  />
                               </TabsContent>
 
@@ -2919,6 +2949,7 @@ export default function Festivals() {
                                     festivalId={selectedFestivalId!}
                                     studioId={studioId!}
                                     enrollments={enrollments}
+                                    isLoadingEnrollments={isLoadingEnrollments}
                                  />
                               </TabsContent>
                            </Tabs>
@@ -2992,7 +3023,7 @@ export default function Festivals() {
                      <div>
                         <label className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1 mb-2 block">Capacidade do Teatro</label>
                         <Input
-                           type="number"
+                           type="number" title="Quantidade" aria-label="Quantidade"
                            className="rounded-2xl h-12 border-slate-100 bg-slate-50/50"
                            value={editingFestival?.total_tickets_limit}
                            onChange={(e) => setEditingFestival((prev: any) => ({ ...prev, total_tickets_limit: Number(e.target.value) }))}

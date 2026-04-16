@@ -737,24 +737,33 @@ export default function Schedule() {
   return (
     <AdminLayout>
       <Toaster />
-      <div className="space-y-4 animate-in fade-in duration-500">
-        <div className="flex items-center justify-between flex-wrap gap-2 border-b border-slate-100 pb-4">
+      <div className="space-y-8 animate-fade-in px-2 sm:px-0">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-6">
           <div className="space-y-1">
-            <Badge className="bg-primary/5 text-primary border-none text-[7px] font-bold uppercase tracking-widest px-1.5 py-0.5 mb-1">Scheduling Engine v7.5.2</Badge>
-            <h1 className="text-lg md:text-xl font-bold uppercase tracking-tight text-slate-950 flex items-center gap-3 leading-none">
-              Grade <span className="text-primary tracking-normal">Horários</span>
+            <h1 className="text-2xl font-black uppercase tracking-tighter flex items-center gap-3 text-slate-800">
+              <div className="bg-primary text-white p-2 rounded-xl shadow-lg shadow-primary/20">
+                <Calendar className="h-5 w-5" />
+              </div>
+              Grade <span className="text-primary">Horários</span>
             </h1>
-            <p className="text-slate-400 text-[9px] uppercase font-bold tracking-widest">Grade mestra com disponibilidade em tempo real</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Escala mestre com disponibilidade em tempo real</p>
           </div>
-          <div className="flex gap-2 flex-wrap">
+          <div className="flex gap-2 flex-wrap sm:flex-nowrap">
             <Dialog open={configDialogOpen} onOpenChange={setConfigDialogOpen}>
               <DialogTrigger asChild>
-                <Button variant="outline" className="h-8 px-4 font-bold uppercase tracking-widest text-[9px] bg-slate-50 border-slate-200 rounded-lg gap-2 transition-all">
-                  <Settings2 className="h-3.5 w-3.5" /> Configurar Grade
+                <Button 
+                  variant="outline" 
+                  className="h-11 px-5 bg-white border-slate-200 text-slate-900 font-black uppercase tracking-widest text-[9px] gap-2 rounded-2xl shadow-sm hover:shadow-md hover:bg-slate-50 transition-all active:scale-95"
+                >
+                  <Settings2 className="h-4 w-4 text-primary" /> Configurar Grade
                 </Button>
               </DialogTrigger>
-              <DialogContent className="w-[95vw] sm:max-w-2xl max-h-[92vh] overflow-y-auto rounded-3xl">
-                <DialogHeader><DialogTitle>Configuração da Grade Mestra</DialogTitle></DialogHeader>
+              <DialogContent className="w-[95vw] sm:max-w-2xl max-h-[92vh] overflow-y-auto border-none shadow-2xl bg-white/90 backdrop-blur-xl rounded-[32px] p-6 focus:outline-none">
+                <DialogHeader className="mb-4">
+                  <DialogTitle className="text-xl font-black uppercase tracking-tight text-slate-800 flex items-center gap-2">
+                    <Settings2 className="h-5 w-5 text-primary" /> Configuração da Grade Mestra
+                  </DialogTitle>
+                </DialogHeader>
                 <p className="text-sm text-muted-foreground">Defina o horário de funcionamento, duração das sessões e intervalos para cada dia.</p>
                 <div className="space-y-3 mt-4">
                   {DIAS_SEMANA.map((dia) => {
@@ -824,29 +833,39 @@ export default function Schedule() {
 
             <Dialog open={bloqueioDialogOpen} onOpenChange={setBloqueioDialogOpen}>
               <DialogTrigger asChild>
-                <Button variant="outline" className="h-8 px-4 font-bold uppercase tracking-widest text-[9px] bg-slate-50 border-slate-200 rounded-lg gap-2 transition-all">
-                  <Ban className="h-3.5 w-3.5" /> Bloqueios
+                <Button 
+                  variant="outline" 
+                  className="h-11 px-5 bg-white border-slate-200 text-slate-900 font-black uppercase tracking-widest text-[9px] gap-2 rounded-2xl shadow-sm hover:shadow-md hover:bg-slate-50 transition-all active:scale-95"
+                >
+                  <Ban className="h-4 w-4 text-rose-500" /> Bloqueios
                 </Button>
               </DialogTrigger>
-              <DialogContent className="w-[95vw] sm:max-w-lg max-h-[92vh] overflow-y-auto rounded-3xl">
-                <DialogHeader><DialogTitle>Bloqueios de Agenda</DialogTitle></DialogHeader>
-                <p className="text-sm text-muted-foreground mb-4">Bloqueie horários para feriados, almoço ou manutenção.</p>
+              <DialogContent className="w-[95vw] sm:max-w-lg max-h-[92vh] overflow-y-auto border-none shadow-2xl bg-white/90 backdrop-blur-xl rounded-[32px] p-6 focus:outline-none">
+                <DialogHeader className="mb-4">
+                  <DialogTitle className="text-xl font-black uppercase tracking-tight text-slate-800 flex items-center gap-2">
+                    <Ban className="h-5 w-5 text-rose-500" /> Bloqueios de Agenda
+                  </DialogTitle>
+                </DialogHeader>
+                <p className="text-sm text-muted-foreground mb-6 font-medium">Gerencie períodos de indisponibilidade (feriados, manutenção, etc).</p>
 
                 {bloqueios.length > 0 && (
-                  <div className="space-y-2 mb-4">
+                  <div className="space-y-3 mb-6">
+                    <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Ativos / Histórico</h4>
                     {bloqueios.map((b: any) => (
-                      <div key={b.id} className="flex items-center justify-between border rounded-lg p-3 text-sm">
-                        <div>
-                          <p className="font-medium">{b.titulo}</p>
-                          <p className="text-xs text-muted-foreground">
-                            {MOTIVOS_BLOQUEIO.find((m) => m.value === b.motivo)?.label || b.motivo}
-                            {" · "}
-                            {b.recorrente ? `Recorrente (${(b.dias_semana || []).join(", ")})` : `${b.data_inicio} → ${b.data_fim}`}
-                            {b.horario_inicio && ` · ${b.horario_inicio?.slice(0, 5)}–${b.horario_fim?.slice(0, 5)}`}
-                          </p>
+                      <div key={b.id} className="flex items-center justify-between bg-white border border-slate-100 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all">
+                        <div className="space-y-1">
+                          <p className="font-black text-slate-800 tracking-tight">{b.titulo}</p>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <Badge variant="outline" className="text-[8px] font-black uppercase border-slate-100 bg-slate-50">
+                              {MOTIVOS_BLOQUEIO.find((m) => m.value === b.modality || m.value === b.motivo)?.label || b.motivo}
+                            </Badge>
+                            <span className="text-[9px] font-bold text-slate-400 italic">
+                              {b.recorrente ? `Semanal (${(b.dias_semana || []).join(", ")})` : `${b.data_inicio} → ${b.data_fim}`}
+                            </span>
+                          </div>
                         </div>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => requestBloqueio(b.id, b.titulo, () => deleteBloqueioMutation.mutate(b.id))}>
-                          <Trash2 className="h-3.5 w-3.5" />
+                        <Button variant="ghost" size="icon" className="h-10 w-10 text-rose-500 hover:bg-rose-50 rounded-xl" onClick={() => requestBloqueio(b.id, b.titulo, () => deleteBloqueioMutation.mutate(b.id))}>
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     ))}
@@ -925,27 +944,36 @@ export default function Schedule() {
               if (o && regras) setLocalRegras({ ...regras });
             }}>
               <DialogTrigger asChild>
-                <Button variant="outline" className="h-8 px-4 font-bold uppercase tracking-widest text-[9px] bg-slate-50 border-slate-200 rounded-lg gap-2 transition-all">
-                  <ShieldCheck className="h-3.5 w-3.5" /> Regras
+                <Button 
+                  variant="outline" 
+                  className="h-11 px-5 bg-white border-slate-200 text-slate-900 font-black uppercase tracking-widest text-[9px] gap-2 rounded-2xl shadow-sm hover:shadow-md hover:bg-slate-50 transition-all active:scale-95"
+                >
+                  <ShieldCheck className="h-4 w-4 text-emerald-500" /> Regras
                 </Button>
               </DialogTrigger>
-              <DialogContent className="w-[95vw] sm:max-w-md rounded-3xl">
-                <DialogHeader><DialogTitle>Regras de Agendamento</DialogTitle></DialogHeader>
+              <DialogContent className="w-[95vw] sm:max-w-md border-none shadow-2xl bg-white/90 backdrop-blur-xl rounded-[32px] p-6">
+                <DialogHeader className="mb-4">
+                  <DialogTitle className="text-xl font-black uppercase tracking-tight text-slate-800 flex items-center gap-2">
+                    <ShieldCheck className="h-5 w-5 text-emerald-500" /> Regras de Agendamento
+                  </DialogTitle>
+                </DialogHeader>
                 {localRegras && (
                   <form onSubmit={(e) => { e.preventDefault(); updateRegrasMutation.mutate(localRegras); }} className="space-y-4 mt-2">
                     <div className="space-y-2">
-                      <Label>Antecedência para agendar (horas)</Label>
-                      <Input type="number" value={localRegras.antecedencia_agendamento_horas} onChange={(e) => setLocalRegras({ ...localRegras, antecedencia_agendamento_horas: parseInt(e.target.value) || 0 })} />
+                      <Label className="text-[10px] font-black uppercase text-slate-500 ml-1">Antecedência p/ agendar (horas)</Label>
+                      <Input type="number" className="h-10 rounded-xl" value={localRegras.antecedencia_agendamento_horas} onChange={(e) => setLocalRegras({ ...localRegras, antecedencia_agendamento_horas: parseInt(e.target.value) || 0 })} />
                     </div>
                     <div className="space-y-2">
-                      <Label>Antecedência para cancelar (horas)</Label>
-                      <Input type="number" value={localRegras.antecedencia_cancelamento_horas} onChange={(e) => setLocalRegras({ ...localRegras, antecedencia_cancelamento_horas: parseInt(e.target.value) || 0 })} />
+                      <Label className="text-[10px] font-black uppercase text-slate-500 ml-1">Antecedência p/ cancelar (horas)</Label>
+                      <Input type="number" className="h-10 rounded-xl" value={localRegras.antecedencia_cancelamento_horas} onChange={(e) => setLocalRegras({ ...localRegras, antecedencia_cancelamento_horas: parseInt(e.target.value) || 0 })} />
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3 p-3 bg-slate-50/50 rounded-2xl border border-slate-100">
                       <Switch checked={localRegras.permitir_lista_espera} onCheckedChange={(v) => setLocalRegras({ ...localRegras, permitir_lista_espera: v })} />
-                      <Label>Permitir fila de espera</Label>
+                      <Label className="text-sm font-bold text-slate-700">Permitir fila de espera</Label>
                     </div>
-                    <Button type="submit" className="w-full" disabled={updateRegrasMutation.isPending}>Salvar Regras</Button>
+                    <Button type="submit" className="w-full h-11 bg-slate-900 hover:bg-slate-800 text-white font-black uppercase tracking-widest text-[10px] gap-2 rounded-xl shadow-lg mt-2" disabled={updateRegrasMutation.isPending}>
+                      {updateRegrasMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />} Salvar Regras
+                    </Button>
                   </form>
                 )}
               </DialogContent>
@@ -954,36 +982,40 @@ export default function Schedule() {
         </div>
 
         {/* Calendar Nav & Grid */}
-        <Card className="border-none shadow-2xl rounded-[2rem] overflow-hidden bg-white ring-1 ring-slate-100 backdrop-blur-xl bg-white/80">
+        <Card className="border-none shadow-2xl rounded-[2.5rem] overflow-hidden bg-white ring-1 ring-slate-100 backdrop-blur-xl bg-white/80">
           <CardContent className="p-0">
             {/* Header / Nav */}
-            <div className="bg-slate-900 px-6 py-4 flex items-center justify-between text-white border-b border-white/5">
-              <div className="flex items-center gap-4">
+            <div className="bg-slate-950 px-8 py-6 flex items-center justify-between text-white border-b border-white/5 shadow-lg shadow-slate-900/10">
+              <div className="flex items-center gap-6">
                 <Button 
                   variant="ghost" size="icon" 
-                  className="h-9 w-9 bg-white/5 border border-white/10 text-white rounded-xl hover:bg-white/10" 
+                  className="h-12 w-12 bg-white/5 border border-white/10 text-white rounded-2xl hover:bg-white/10 hover:scale-105 active:scale-95 transition-all" 
                   onClick={() => setWeekOffset(w => w - 1)}
+                  title="Semana Anterior"
                 >
-                  <ChevronLeft className="h-4 w-4" />
+                  <ChevronLeft className="h-5 w-5" />
                 </Button>
-                <div>
-                  <span className="text-[11px] font-black uppercase tracking-[0.2em] text-primary block leading-none mb-1">Periodo Atual</span>
-                  <span className="text-sm font-black italic uppercase tracking-tighter">{weekLabel}</span>
+                <div className="text-center sm:text-left">
+                  <span className="text-[9px] font-black uppercase tracking-[0.3em] text-primary block leading-none mb-2">Visualização Semanal</span>
+                  <h2 className="text-lg font-black italic uppercase tracking-tighter flex items-center gap-2">
+                    <Calendar className="h-4 w-4 text-primary" /> {weekLabel}
+                  </h2>
                 </div>
                 <Button 
                   variant="ghost" size="icon" 
-                  className="h-9 w-9 bg-white/5 border border-white/10 text-white rounded-xl hover:bg-white/10" 
+                  className="h-12 w-12 bg-white/5 border border-white/10 text-white rounded-2xl hover:bg-white/10 hover:scale-105 active:scale-95 transition-all" 
                   onClick={() => setWeekOffset(w => w + 1)}
+                  title="Próxima Semana"
                 >
-                  <ChevronRight className="h-4 w-4" />
+                  <ChevronRight className="h-5 w-5" />
                 </Button>
               </div>
 
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-4">
                 {weekOffset !== 0 && (
                   <Button 
                     variant="ghost" 
-                    className="h-8 px-4 text-[9px] font-black uppercase tracking-widest bg-white/10 text-white rounded-xl hover:bg-white/20" 
+                    className="h-10 px-5 text-[10px] font-black uppercase tracking-widest bg-primary text-black rounded-xl hover:bg-primary/90 shadow-lg shadow-primary/20" 
                     onClick={() => setWeekOffset(0)}
                   >
                     Voltar para Hoje
@@ -1002,26 +1034,34 @@ export default function Schedule() {
             <div className="overflow-x-auto p-4 lg:p-6 custom-scrollbar">
               <div className="min-w-[800px]">
                 {/* Day Headers */}
-                <div className="grid grid-cols-7 gap-4 mb-6">
-                  <div className="flex flex-col justify-center">
-                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 pl-4 mb-2">Horário</span>
-                    <div className="h-1 w-8 bg-primary rounded-full ml-4" />
+                <div className="grid grid-cols-7 gap-5 mb-8">
+                  <div className="flex flex-col justify-center items-center text-center">
+                    <div className="h-10 w-10 rounded-2xl bg-slate-950 flex items-center justify-center shadow-lg shadow-slate-200 mb-2">
+                       <Clock className="h-5 w-5 text-primary" />
+                    </div>
+                    <span className="text-[8px] font-black uppercase tracking-widest text-slate-400">Time/Slot</span>
                   </div>
                   {weekDays.map((day) => {
                     const dateObj = weekDates[day];
                     const isToday = dateObj && new Date().toDateString() === dateObj.toDateString();
                     return (
                       <div key={day} className={cn(
-                        "flex flex-col items-center py-3 rounded-2xl relative transition-all",
-                        isToday ? "bg-primary text-black shadow-xl shadow-primary/20" : "bg-slate-50/50 text-slate-900 border border-slate-100"
+                        "flex flex-col items-center py-4 rounded-[1.5rem] relative transition-all border",
+                        isToday 
+                          ? "bg-slate-950 text-white shadow-2xl shadow-slate-300 border-slate-950 scale-105 z-10" 
+                          : "bg-white text-slate-900 border-slate-100 shadow-sm"
                       )}>
-                        <span className="text-[10px] font-black uppercase tracking-widest mb-1">{weekDayLabels[day]}</span>
+                        <span className={cn(
+                          "text-[10px] font-black uppercase tracking-widest mb-1.5",
+                          isToday ? "text-primary" : "text-slate-500"
+                        )}>{weekDayLabels[day]}</span>
                         <div className={cn(
-                          "px-2 py-0.5 rounded-full text-[9px] font-black",
-                          isToday ? "bg-black/10" : "bg-slate-200 text-slate-500"
+                          "px-3 py-1 rounded-xl text-[10px] font-black",
+                          isToday ? "bg-white/10 text-white" : "bg-slate-100 text-slate-950"
                         )}>
                           {dateObj?.toLocaleDateString("pt-BR", { day: "numeric", month: "short" })}
                         </div>
+                        {isToday && <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-4 h-1 bg-primary rounded-full" />}
                       </div>
                     );
                   })}
@@ -1344,12 +1384,28 @@ export default function Schedule() {
         </Dialog>
 
         <Dialog open={instrutorDialogOpen} onOpenChange={setInstrutorDialogOpen}>
-          <DialogContent className="w-[95vw] sm:max-w-md rounded-3xl">
-            <DialogHeader><DialogTitle>{selectedTurma?.nome} — Instrutor</DialogTitle></DialogHeader>
+          <DialogContent className="w-[95vw] sm:max-w-md border-none shadow-2xl bg-white/90 backdrop-blur-xl rounded-[32px] p-6 focus:outline-none">
+            <DialogHeader className="mb-4">
+              <DialogTitle className="text-xl font-black uppercase tracking-tight text-slate-800 flex items-center gap-2">
+                <UserCog className="h-5 w-5 text-primary" /> Atribuir Instrutor
+              </DialogTitle>
+            </DialogHeader>
+            <p className="text-sm text-muted-foreground mb-6 font-medium">Defina o profissional responsável pelas atividades desta turma.</p>
+            
             {selectedTurma && (
-              <div className="space-y-4">
+              <div className="space-y-6">
+                <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                  <div className="h-10 w-10 rounded-xl flex items-center justify-center text-lg" style={{ backgroundColor: `${selectedTurma.modalities?.cor}20` }}>
+                    {selectedTurma.modalities?.emoji || "🧘"}
+                  </div>
+                  <div>
+                    <h4 className="font-black text-slate-900 uppercase tracking-tighter italic leading-none">{selectedTurma.nome}</h4>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">{selectedTurma.modalities?.nome}</p>
+                  </div>
+                </div>
+
                 <div className="space-y-2">
-                  <Label>Instrutor Vinculado</Label>
+                  <Label className="text-[10px] font-black uppercase text-slate-400 ml-1">Selecione o Profissional</Label>
                   <Select
                     value={selectedTurma.instrutor_id || "none"}
                     onValueChange={(v) => updateInstrutorMutation.mutate({ 
@@ -1358,15 +1414,24 @@ export default function Schedule() {
                       type: selectedTurma._source || 'regular'
                     })}
                   >
-                    <SelectTrigger><SelectValue placeholder="Sem instrutor" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="none">Sem instrutor</SelectItem>
+                    <SelectTrigger className="h-12 rounded-2xl border-slate-200">
+                      <SelectValue placeholder="Selecione um instrutor" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-2xl border-none shadow-2xl">
+                      <SelectItem value="none" className="font-bold text-rose-500">Sem instrutor (Vago)</SelectItem>
                       {profiles.map((p: any) => (
-                        <SelectItem key={p.user_id} value={p.user_id}>{p.nome}</SelectItem>
+                        <SelectItem key={p.user_id} value={p.user_id} className="font-black uppercase tracking-tight italic">{p.nome}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
+
+                <Button 
+                  className="w-full h-12 bg-slate-950 hover:bg-slate-800 text-white font-black uppercase tracking-widest text-[11px] rounded-2xl shadow-xl transition-all active:scale-95" 
+                  onClick={() => setInstrutorDialogOpen(false)}
+                >
+                  Confirmar Alteração
+                </Button>
               </div>
             )}
           </DialogContent>

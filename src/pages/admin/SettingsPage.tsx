@@ -13,6 +13,7 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { uploadFile } from "@/utils/upload";
+import { cn } from "@/lib/utils";
 import { Palette, Building2, CalendarCog, Type, ImageIcon, Save, Loader2, Upload, Percent, Globe, MapPin, Search, Smartphone, User, Zap, Mail, MessageCircle, FileSignature, CheckCircle2, AlertCircle, Send, CreditCard, Plug, ArrowRight } from "lucide-react";
 import { HslColorPicker } from "react-colorful";
 import { whatsappService, WhatsAppConfig } from "@/services/whatsappService";
@@ -95,33 +96,33 @@ function ColorPickerField({
   const hsl = parseHsl(value);
 
   return (
-    <div className="space-y-2">
-      <Label className="text-sm font-medium">{label}</Label>
+    <div className="flex items-center justify-between p-3 rounded-xl border border-slate-100 bg-white/50 hover:bg-white hover:shadow-sm transition-all group">
+      <div className="space-y-0.5">
+        <Label className="text-[11px] font-black uppercase tracking-tight text-slate-700">{label}</Label>
+        <p className="text-[9px] font-mono text-slate-400">{value}</p>
+      </div>
       <div className="flex items-center gap-3">
         <Popover>
-          <PopoverTrigger asChild>
+          <PopoverTrigger asChild title={`Seletor de cor para ${label}`}>
             <button
-              className="h-10 w-10 rounded-lg border-2 border-border shrink-0 cursor-pointer hover:ring-2 hover:ring-ring transition-all shadow-sm"
-              style={{ backgroundColor: `hsl(${value})` }}
+              className={cn(
+                "h-10 w-10 rounded-full border-4 border-white shrink-0 cursor-pointer shadow-md hover:scale-110 transition-transform ring-1 ring-slate-100",
+                `bg-[hsl(${value?.replace(/\s+/g, '_') || '0_0%_100%'})]`
+              )}
               aria-label={`Selecionar ${label}`}
             />
           </PopoverTrigger>
-          <PopoverContent className="w-auto p-3" align="start">
+          <PopoverContent className="w-auto p-4 rounded-2xl shadow-2xl border-none bg-white/90 backdrop-blur-xl" align="end">
+            <h4 className="text-[10px] font-black uppercase mb-3 text-slate-500 tracking-widest">{label}</h4>
             <HslColorPicker
               color={hsl}
               onChange={(newHsl) => onChange(formatHsl(newHsl))}
             />
-            <p className="text-[10px] text-muted-foreground mt-2 text-center font-mono">
-              {value}
-            </p>
+            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+               <span className="text-[10px] font-bold font-mono text-slate-400 bg-slate-50 px-2 py-1 rounded">HSL: {value}</span>
+            </div>
           </PopoverContent>
         </Popover>
-        <div
-          className="flex-1 h-10 rounded-lg border border-border"
-          style={{
-            background: `linear-gradient(90deg, hsl(${hsl.h} 10% 50%), hsl(${hsl.h} ${hsl.s}% ${hsl.l}%), hsl(${hsl.h} 100% 50%))`,
-          }}
-        />
       </div>
     </div>
   );
@@ -229,12 +230,13 @@ function FinancialRulesCard() {
   if (isLoading) return null;
 
   return (
-    <Card>
+    <Card className="border-none shadow-xl bg-white/40 backdrop-blur-md">
       <CardHeader>
-        <CardTitle className="text-base flex items-center gap-2">
-          <Percent className="h-4 w-4 text-primary" /> Regras Financeiras
+        <CardTitle className="text-sm font-black uppercase tracking-tighter flex items-center gap-2 text-slate-800">
+          <div className="bg-primary text-white p-1.5 rounded-lg shadow-sm"><Percent className="h-4 w-4" /></div>
+          Regras Financeiras
         </CardTitle>
-        <CardDescription>Configure juros, multas e carência para pagamentos em atraso</CardDescription>
+        <CardDescription className="text-[10px] font-medium text-slate-500">Configure juros, multas e carência para pagamentos em atraso</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
@@ -320,12 +322,13 @@ function CheckinRulesCard({
   onSave: () => void;
 }) {
   return (
-    <Card>
+    <Card className="border-none shadow-xl bg-white/40 backdrop-blur-md">
       <CardHeader>
-        <CardTitle className="text-base flex items-center gap-2">
-          <CalendarCog className="h-4 w-4 text-primary" /> Parâmetros de Check-in (Instrutor)
+        <CardTitle className="text-sm font-black uppercase tracking-tighter flex items-center gap-2 text-slate-800">
+          <div className="bg-primary text-white p-1.5 rounded-lg shadow-sm"><CalendarCog className="h-4 w-4" /></div>
+          Parâmetros de Check-in (Instrutor)
         </CardTitle>
-        <CardDescription>Configure as janelas de tolerância e permissões de horário</CardDescription>
+        <CardDescription className="text-[10px] font-medium text-slate-500">Configure as janelas de tolerância e permissões de horário</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex items-center justify-between">
@@ -413,12 +416,13 @@ function GeoCheckinSettingsCard({
   };
 
   return (
-    <Card>
+    <Card className="border-none shadow-xl bg-white/40 backdrop-blur-md">
       <CardHeader>
-        <CardTitle className="text-base flex items-center gap-2">
-          <MapPin className="h-4 w-4 text-primary" /> Geolocalização do Check-in
+        <CardTitle className="text-sm font-black uppercase tracking-tighter flex items-center gap-2 text-slate-800">
+          <div className="bg-primary text-white p-1.5 rounded-lg shadow-sm"><MapPin className="h-4 w-4" /></div>
+          Geolocalização do Check-in
         </CardTitle>
-        <CardDescription>Busque o endereço ou insira as coordenadas manualmente</CardDescription>
+        <CardDescription className="text-[10px] font-medium text-slate-500">Busque o endereço ou insira as coordenadas manualmente</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Nominatim search */}
@@ -494,6 +498,122 @@ function GeoCheckinSettingsCard({
         </Button>
       </CardContent>
     </Card>
+  );
+}
+
+function PreviewUI({ values }: { values: Record<string, string> }) {
+  const getV = (k: string) => values[k] || "";
+  const fTitulo = getV("tema.fonte_titulo") || "Plus Jakarta Sans";
+  const fCorpo = getV("tema.fonte_corpo") || "Inter";
+  
+  return (
+    <div className="sticky top-6 space-y-4">
+      <div className="flex items-center justify-between">
+         <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400">Preview em Tempo Real</h4>
+         <div className="flex gap-1">
+            <div className="h-1.5 w-1.5 rounded-full bg-red-400" />
+            <div className="h-1.5 w-1.5 rounded-full bg-amber-400" />
+            <div className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+         </div>
+      </div>
+      
+      <div className="rounded-2xl border border-slate-200 overflow-hidden shadow-2xl bg-slate-50 aspect-video sm:aspect-auto flex flex-col sm:min-h-[400px]">
+        {/* Mock Header */}
+        <div className="h-8 bg-white border-b border-slate-100 flex items-center px-3 gap-2">
+          <div className="h-2 w-10 rounded bg-slate-100" />
+          <div className="h-2 w-10 rounded bg-slate-100" />
+          <div className="ml-auto flex gap-2">
+            <div 
+              className={cn(
+                "h-4 w-4 rounded-full",
+                `bg-[hsl(${getV("tema.cor_primaria")?.replace(/\s+/g, '_') || "220_100%_50%"})]`
+              )} 
+            />
+          </div>
+        </div>
+        
+        <div className="flex flex-1 overflow-hidden">
+          {/* Mock Sidebar */}
+          <div 
+            className={cn(
+              "w-16 border-r border-slate-100 p-2 space-y-3",
+              `bg-[hsl(${getV("tema.cor_sidebar")?.replace(/\s+/g, '_') || "222_47%_11%"})]`
+            )} 
+           >
+            <div className="h-4 w-full rounded bg-white/10" />
+            <div className="h-3 w-8 rounded bg-white/20 mx-auto" />
+            <div className="h-3 w-6 rounded bg-white/10 mx-auto" />
+            <div className="h-3 w-7 rounded bg-white/10 mx-auto" />
+          </div>
+          
+          {/* Mock Content */}
+          <div className="flex-1 p-4 space-y-4">
+            <div className="space-y-1">
+               <h2 
+                 className={cn(
+                   "text-sm font-black uppercase",
+                   `font-['${fTitulo}']`,
+                   `text-[hsl(${getV("tema.cor_foreground")?.replace(/\s+/g, '_') || "222_47%_11%"})]`
+                 )}
+               >
+                 Meu Estúdio
+               </h2>
+               <p 
+                 className={cn(
+                   "text-[10px]",
+                   `font-['${fCorpo}']`,
+                   `text-[hsl(${getV("tema.cor_muted_foreground")?.replace(/\s+/g, '_') || "215_16%_47%"})]`
+                 )}
+               >
+                 Configurações aplicadas agora
+               </p>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-3">
+               <div 
+                 className={cn(
+                   "p-3 rounded-xl border border-slate-200 shadow-sm",
+                   `bg-[hsl(${getV("tema.cor_card")?.replace(/\s+/g, '_') || "0_0%_100%"})]`
+                 )}
+               >
+                  <div 
+                    className={cn(
+                      "h-2 w-12 rounded mb-2",
+                      `bg-[hsl(${getV("tema.cor_primaria")?.replace(/\s+/g, '_') || "220_100%_50%"})]`
+                    )} 
+                  />
+                  <div className="h-1.5 w-full rounded bg-slate-100 mb-1" />
+                  <div className="h-1.5 w-3/4 rounded bg-slate-100" />
+               </div>
+               <div 
+                 className={cn(
+                   "p-3 rounded-xl border border-slate-200 shadow-sm",
+                   `bg-[hsl(${getV("tema.cor_card")?.replace(/\s+/g, '_') || "0_0%_100%"})]`
+                 )}
+               >
+                  <div 
+                    className={cn(
+                      "h-2 w-8 rounded mb-2",
+                      `bg-[hsl(${getV("tema.cor_accent")?.replace(/\s+/g, '_') || "220_100%_50%"})]`
+                    )} 
+                  />
+                  <div className="h-1.5 w-full rounded bg-slate-100 mb-1" />
+                  <div className="h-1.5 w-1/2 rounded bg-slate-100" />
+               </div>
+            </div>
+            
+            <button 
+               className={cn(
+                 "w-full py-2 rounded-lg text-white font-bold text-[10px] uppercase tracking-wider",
+                 `bg-[hsl(${getV("tema.cor_primaria")?.replace(/\s+/g, '_') || "220_100%_50%"})]`
+               )}
+             >
+              Simular Botão Principal
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -646,225 +766,235 @@ export default function SettingsPage() {
 
   return (
     <AdminLayout>
-      <div className="space-y-6 animate-fade-in">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Configurações</h1>
-          <p className="text-muted-foreground">Personalize seu estúdio, tema e regras do sistema</p>
+      <div className="space-y-8 animate-fade-in relative">
+        {/* Background Accent */}
+        <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary/5 rounded-full blur-3xl -z-10" />
+        
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+          <div className="space-y-1">
+            <h1 className="text-3xl font-black tracking-tighter uppercase italic text-slate-900 flex items-center gap-3">
+               <div className="h-8 w-2 bg-primary rounded-full shadow-sm shadow-primary/20" />
+               Configurações
+            </h1>
+            <p className="text-sm font-medium text-slate-500">Personalize seu estúdio, tema e regras do ecossistema Kineos</p>
+          </div>
+          
+          <div className="hidden sm:flex items-center gap-2 text-[10px] font-black uppercase text-slate-400 bg-white/50 backdrop-blur-sm px-3 py-1.5 rounded-full border border-slate-100 shadow-sm">
+             <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+             Estúdio Ativo: {studioId?.substring(0, 8)}...
+          </div>
         </div>
 
-        <Tabs defaultValue="aparencia" className="space-y-6">
-          <TabsList className="flex w-full overflow-x-auto max-w-2xl">
-            <TabsTrigger value="aparencia" className="gap-1.5 min-w-0 flex-1 text-xs sm:text-sm">
-              <Palette className="h-4 w-4 shrink-0" /> <span className="hidden sm:inline">Aparência</span><span className="sm:hidden">Tema</span>
-            </TabsTrigger>
-            <TabsTrigger value="automacao" className="gap-1.5 min-w-0 flex-1 text-xs sm:text-sm">
-              <Zap className="h-4 w-4 shrink-0" /> <span className="hidden sm:inline">WhatsApp & Automação</span><span className="sm:hidden">WhatsApp</span>
-            </TabsTrigger>
-            <TabsTrigger value="geral" className="gap-1.5 min-w-0 flex-1 text-xs sm:text-sm">
-              <Building2 className="h-4 w-4 shrink-0" /> <span className="hidden sm:inline">Estúdio & Pix</span><span className="sm:hidden">Info</span>
-            </TabsTrigger>
-            <TabsTrigger value="regras" className="gap-1.5 min-w-0 flex-1 text-xs sm:text-sm">
-              <CalendarCog className="h-4 w-4 shrink-0" /> Regras
-            </TabsTrigger>
-            <TabsTrigger value="pessoais" className="gap-1.5 min-w-0 flex-1 text-xs sm:text-sm">
-              <User className="h-4 w-4 shrink-0" /> <span className="hidden sm:inline">Pessoais</span><span className="sm:hidden">Eu</span>
-            </TabsTrigger>
+        <Tabs defaultValue="aparencia" className="space-y-8">
+          <TabsList className="flex w-full overflow-x-auto max-w-4xl bg-white/40 backdrop-blur-md p-1.5 rounded-2xl border border-slate-100 shadow-xl">
+            {[
+              { value: "aparencia", icon: Palette, label: "Aparência", short: "Tema" },
+              { value: "automacao", icon: Zap, label: "Automação", short: "Bots" },
+              { value: "geral", icon: Building2, label: "Estúdio & Pix", short: "Info" },
+              { value: "regras", icon: CalendarCog, label: "Regras", short: "Regras" },
+              { value: "pessoais", icon: User, label: "Pessoais", short: "Eu" },
+            ].map(({ value, icon: Icon, label, short }) => (
+              <TabsTrigger 
+                key={value}
+                value={value} 
+                className="gap-2 min-w-0 flex-1 h-10 rounded-xl font-black uppercase text-[10px] tracking-widest transition-all data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-lg shadow-slate-200"
+              >
+                <Icon className="h-3.5 w-3.5 shrink-0" /> 
+                <span className="hidden md:inline">{label}</span>
+                <span className="md:hidden">{short}</span>
+              </TabsTrigger>
+            ))}
           </TabsList>
 
           {/* ===== APARÊNCIA ===== */}
-          <TabsContent value="aparencia" className="space-y-6 max-w-2xl">
-            {/* Cores */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base flex items-center gap-2">
-                  <Palette className="h-4 w-4 text-primary" /> Cores do Tema
-                </CardTitle>
-                <CardDescription>Clique na cor para abrir o seletor visual</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-5">
-                {[
-                  { chave: "tema.cor_primaria", label: "Cor Primária" },
-                  { chave: "tema.cor_accent", label: "Cor de Destaque" },
-                  { chave: "tema.cor_sidebar", label: "Cor da Sidebar" },
-                  { chave: "tema.cor_foreground", label: "Cor do Texto Principal" },
-                  { chave: "tema.cor_muted_foreground", label: "Cor do Texto Secundário" },
-                  { chave: "tema.cor_card", label: "Cor de Fundo dos Cards" },
-                ].map(({ chave, label }) => (
-                  <ColorPickerField
-                    key={chave}
-                    label={label}
-                    value={getValue(chave)}
-                    onChange={(v) => setValue(chave, v)}
-                  />
-                ))}
-
-                <div className="flex items-center justify-between pt-2">
-                  <div>
-                    <Label>Modo Escuro Padrão</Label>
-                    <p className="text-xs text-muted-foreground">Ativar tema escuro por padrão</p>
-                  </div>
-                  <Switch
-                    checked={getValue("tema.modo_escuro") === "true"}
-                    onCheckedChange={(v) => setValue("tema.modo_escuro", v ? "true" : "false")}
-                  />
-                </div>
-
-                <Button onClick={() => saveCategory("aparencia")} disabled={saving} className="gap-2">
-                  <Save className="h-4 w-4" /> Salvar Cores
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Tipografia */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base flex items-center gap-2">
-                  <Type className="h-4 w-4 text-primary" /> Tipografia
-                </CardTitle>
-                <CardDescription>Escolha as fontes, tamanhos e pesos do sistema</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label>Fonte dos Títulos</Label>
-                  <Select value={getValue("tema.fonte_titulo")} onValueChange={(v) => setValue("tema.fonte_titulo", v)}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      {FONT_OPTIONS.map((f) => (
-                        <SelectItem key={f} value={f} style={{ fontFamily: f }}>{f}</SelectItem>
+          <TabsContent value="aparencia" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+              {/* Coluna de Configurações */}
+              <div className="space-y-6">
+                {/* Cores */}
+                <Card className="border-none shadow-xl bg-white/40 backdrop-blur-md">
+                  <CardHeader>
+                    <CardTitle className="text-sm font-black uppercase tracking-tighter flex items-center gap-2 text-slate-800">
+                      <div className="bg-indigo-500 text-white p-1.5 rounded-lg shadow-sm"><Palette className="h-4 w-4" /></div>
+                      Cores do Tema
+                    </CardTitle>
+                    <CardDescription className="text-[10px] font-medium text-slate-500">
+                      Personalize a identidade visual do seu sistema. As mudanças são refletidas no preview ao lado.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {[
+                        { chave: "tema.cor_primaria", label: "Marca Principal" },
+                        { chave: "tema.cor_accent", label: "Destaque / Accent" },
+                        { chave: "tema.cor_sidebar", label: "Barra Lateral" },
+                        { chave: "tema.cor_card", label: "Fundo de Cards" },
+                        { chave: "tema.cor_foreground", label: "Texto Principal" },
+                        { chave: "tema.cor_muted_foreground", label: "Texto Muted" },
+                      ].map(({ chave, label }) => (
+                        <ColorPickerField
+                          key={chave}
+                          label={label}
+                          value={getValue(chave)}
+                          onChange={(v) => setValue(chave, v)}
+                        />
                       ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label>Fonte do Corpo</Label>
-                  <Select value={getValue("tema.fonte_corpo")} onValueChange={(v) => setValue("tema.fonte_corpo", v)}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      {FONT_OPTIONS.map((f) => (
-                        <SelectItem key={f} value={f} style={{ fontFamily: f }}>{f}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                    </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Tamanho Base (px)</Label>
-                    <Select value={getValue("tema.tamanho_base") || "16"} onValueChange={(v) => setValue("tema.tamanho_base", v)}>
-                      <SelectTrigger><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        {["13", "14", "15", "16", "17", "18", "20"].map((s) => (
-                          <SelectItem key={s} value={s}>{s}px</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <p className="text-[10px] text-muted-foreground">Tamanho padrão do texto do corpo</p>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Escala dos Títulos</Label>
-                    <Select value={getValue("tema.escala_titulo") || "normal"} onValueChange={(v) => setValue("tema.escala_titulo", v)}>
-                      <SelectTrigger><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="compact">Compacta</SelectItem>
-                        <SelectItem value="normal">Normal</SelectItem>
-                        <SelectItem value="large">Grande</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <p className="text-[10px] text-muted-foreground">Proporção dos títulos em relação ao corpo</p>
-                  </div>
-                </div>
+                    <div className="flex items-center justify-between p-4 rounded-xl bg-slate-50 mt-4 border border-slate-100">
+                      <div>
+                        <Label className="text-xs font-bold text-slate-700">Modo Escuro Padrão</Label>
+                        <p className="text-[10px] text-slate-400">Iniciar com tema dark ativo</p>
+                      </div>
+                      <Switch
+                        checked={getValue("tema.modo_escuro") === "true"}
+                        onCheckedChange={(v) => setValue("tema.modo_escuro", v ? "true" : "false")}
+                      />
+                    </div>
 
-                {/* Preview */}
-                <div className="rounded-lg border border-border p-4 bg-muted/30">
-                  <p className="text-xs text-muted-foreground mb-2">Pré-visualização</p>
-                  <h3
-                    className="font-bold"
-                    style={{
-                      fontFamily: getValue("tema.fonte_titulo") || "Plus Jakarta Sans",
-                      fontSize: `${getTitleSize(getValue("tema.tamanho_base") || "16", getValue("tema.escala_titulo") || "normal")}px`,
-                    }}
-                  >
-                    Título de Exemplo
-                  </h3>
-                  <p
-                    className="text-muted-foreground mt-1"
-                    style={{
-                      fontFamily: getValue("tema.fonte_corpo") || "Inter",
-                      fontSize: `${getValue("tema.tamanho_base") || "16"}px`,
-                    }}
-                  >
-                    Este é um texto de corpo para visualizar a fonte e tamanho escolhidos.
-                  </p>
-                </div>
+                    <Button onClick={() => saveCategory("aparencia")} disabled={saving} className="w-full h-11 bg-slate-900 hover:bg-slate-800 text-white font-black uppercase tracking-widest text-[10px] gap-2 rounded-xl shadow-lg shadow-slate-200">
+                      {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Salvar Identidade Visual
+                    </Button>
+                  </CardContent>
+                </Card>
 
-                <Button onClick={() => saveCategory("aparencia")} disabled={saving} className="gap-2">
-                  <Save className="h-4 w-4" /> Salvar Tipografia
-                </Button>
-              </CardContent>
-            </Card>
+                {/* Tipografia */}
+                <Card className="border-none shadow-xl bg-white/40 backdrop-blur-md">
+                  <CardHeader>
+                    <CardTitle className="text-sm font-black uppercase tracking-tighter flex items-center gap-2 text-slate-800">
+                      <div className="bg-amber-500 text-white p-1.5 rounded-lg shadow-sm"><Type className="h-4 w-4" /></div>
+                      Tipografia
+                    </CardTitle>
+                    <CardDescription className="text-[10px] font-medium text-slate-500">Fontes e escalas para legibilidade e estilo</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <Label className="text-[10px] font-black uppercase text-slate-500">Fonte Títulos</Label>
+                        <Select value={getValue("tema.fonte_titulo")} onValueChange={(v) => setValue("tema.fonte_titulo", v)}>
+                          <SelectTrigger className="h-10 rounded-xl bg-white focus:ring-1 border-slate-100"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            {FONT_OPTIONS.map((f) => (
+                              <SelectItem key={f} value={f} className={cn(`font-['${f}']`)}>{f}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label className="text-[10px] font-black uppercase text-slate-500">Fonte Corpo</Label>
+                        <Select value={getValue("tema.fonte_corpo")} onValueChange={(v) => setValue("tema.fonte_corpo", v)}>
+                          <SelectTrigger className="h-10 rounded-xl bg-white focus:ring-1 border-slate-100"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            {FONT_OPTIONS.map((f) => (
+                              <SelectItem key={f} value={f} className={cn(`font-['${f}']`)}>{f}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <Label className="text-[10px] font-black uppercase text-slate-500">Tamanho Base</Label>
+                        <Select value={getValue("tema.tamanho_base") || "16"} onValueChange={(v) => setValue("tema.tamanho_base", v)}>
+                          <SelectTrigger className="h-10 rounded-xl bg-white focus:ring-1 border-slate-100"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            {["13", "14", "15", "16", "17", "18", "20"].map((s) => (
+                              <SelectItem key={s} value={s}>{s}px</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label className="text-[10px] font-black uppercase text-slate-500">Atalho de Escala</Label>
+                        <Select value={getValue("tema.escala_titulo") || "normal"} onValueChange={(v) => setValue("tema.escala_titulo", v)}>
+                          <SelectTrigger className="h-10 rounded-xl bg-white focus:ring-1 border-slate-100"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="compact">Compacta</SelectItem>
+                            <SelectItem value="normal">Normal</SelectItem>
+                            <SelectItem value="large">Grande</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Coluna de Preview */}
+              <div className="lg:sticky lg:top-6">
+                 <PreviewUI values={localValues} />
+              </div>
+            </div>
 
             {/* Logo e Ícones */}
-            <Card>
+            <Card className="border-none shadow-xl bg-white/40 backdrop-blur-md max-w-2xl">
               <CardHeader>
-                <CardTitle className="text-base flex items-center gap-2">
-                  <ImageIcon className="h-4 w-4 text-primary" /> Logotipo e Ícones
+                <CardTitle className="text-sm font-black uppercase tracking-tighter flex items-center gap-2 text-slate-800">
+                  <div className="bg-emerald-500 text-white p-1.5 rounded-lg shadow-sm"><ImageIcon className="h-4 w-4" /></div>
+                  Logotipo e Ativos de Marca
                 </CardTitle>
-                <CardDescription>Faça upload do logotipo e favicon do estúdio</CardDescription>
+                <CardDescription className="text-[10px] font-medium text-slate-500">Gestão de imagens e identidade da empresa</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                {[
-                  { chave: "tema.logo_url", label: "Logotipo Principal", hint: "Recomendado: PNG transparente, 200x60px" },
-                  { chave: "tema.sidebar_icon_url", label: "Ícone da Sidebar (Quadrado)", hint: "Exibido à esquerda do nome ou logo na sidebar. Recomendado: 128x128px" },
-                  { chave: "tema.sidebar_logo_url", label: "Logo da Sidebar (Retangular)", hint: "Substitui o nome em texto na sidebar. Recomendado: 120x30px" },
-                  { chave: "tema.favicon_url", label: "Favicon", hint: "Recomendado: ICO ou PNG, 32x32px" },
-                ].map(({ chave, label, hint }) => (
-                  <div key={chave} className="space-y-2">
-                    <Label>{label}</Label>
-                    <p className="text-xs text-muted-foreground">{hint}</p>
-                    <div className="flex items-center gap-3">
-                      {getValue(chave) && (
-                        <img
-                          src={getValue(chave)}
-                          alt={label}
-                          className="h-12 w-auto max-w-[200px] rounded border border-border bg-muted/50 object-contain p-1"
-                        />
-                      )}
-                      <div className="flex-1">
-                        <Input
-                          value={getValue(chave)}
-                          onChange={(e) => setValue(chave, e.target.value)}
-                          placeholder="URL da imagem ou faça upload"
-                          className="text-sm"
-                        />
-                      </div>
-                      <label className="cursor-pointer">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          className="hidden"
-                          onChange={(e) => handleLogoUpload(e, chave)}
-                        />
-                        <Button variant="outline" size="icon" asChild>
-                          <span><Upload className="h-4 w-4" /></span>
-                        </Button>
-                      </label>
-                    </div>
-                  </div>
-                ))}
+              <CardContent className="space-y-5">
+                      {[
+                        { chave: "tema.logo_url", label: "Logo Principal", hint: "PNG transparente, 200x60px", id: "logo-url" },
+                        { chave: "tema.sidebar_icon_url", label: "Ícone Sidebar", hint: "Logo quadrada 128x128px", id: "sidebar-icon" },
+                      ].map(({ chave, label, hint, id }) => (
+                        <div key={chave} className="space-y-3 p-4 rounded-2xl bg-white border border-slate-100 shadow-sm relative group overflow-hidden">
+                           <Label htmlFor={id} className="text-[10px] font-black uppercase text-slate-500">{label}</Label>
+                           <div className="h-24 flex items-center justify-center bg-slate-50 rounded-xl border-2 border-dashed border-slate-100 group-hover:border-primary/20 transition-all">
+                              {getValue(chave) ? (
+                                <img src={getValue(chave)} alt={label} className="max-h-16 w-auto object-contain drop-shadow-sm" />
+                              ) : (
+                                <div className="items-center flex flex-col gap-1 text-slate-300">
+                                  <Upload className="h-6 w-6" />
+                                  <span className="text-[8px] font-black uppercase">Nenhuma imagem</span>
+                                </div>
+                              )}
+                           </div>
+                           <div className="flex gap-2">
+                              <Input
+                                id={id}
+                                value={getValue(chave)}
+                                onChange={(e) => setValue(chave, e.target.value)}
+                                placeholder="URL..."
+                                title={`URL da imagem para ${label}`}
+                                className="h-8 text-[10px] border-slate-100 rounded-lg"
+                              />
+                           <label className="cursor-pointer">
+                             <input 
+                               type="file" 
+                               accept="image/*" 
+                               className="hidden" 
+                               onChange={(e) => handleLogoUpload(e, chave)} 
+                               title={`Selecionar imagem para ${label}`}
+                               aria-label={`Selecionar imagem para ${label}`}
+                             />
+                             <Button variant="outline" size="sm" className="h-8 px-2 rounded-lg border-slate-100 hover:bg-slate-50" asChild>
+                               <span><Upload className="h-3.5 w-3.5" /></span>
+                             </Button>
+                           </label>
+                        </div>
+                        <p className="text-[8px] font-medium text-slate-400 italic text-center">{hint}</p>
+                     </div>
+                   ))}
 
-                <Button onClick={() => saveCategory("aparencia")} disabled={saving} className="gap-2">
-                  <Save className="h-4 w-4" /> Salvar Imagens
+                <Button onClick={() => saveCategory("aparencia")} disabled={saving} className="w-full h-11 bg-slate-100 hover:bg-slate-200 text-slate-900 font-black uppercase tracking-widest text-[10px] gap-2 rounded-xl transition-all">
+                  {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Atualizar Imagens da Marca
                 </Button>
               </CardContent>
             </Card>
           </TabsContent>
 
-          {/* ===== ESTÚDIO ===== */}
           <TabsContent value="geral" className="space-y-6 max-w-2xl">
-            <Card>
+            <Card className="border-none shadow-xl bg-white/40 backdrop-blur-md">
               <CardHeader>
-                <CardTitle className="text-base">Dados do Estúdio</CardTitle>
-                <CardDescription>Informações básicas do seu estúdio</CardDescription>
+                <CardTitle className="text-sm font-black uppercase tracking-tighter flex items-center gap-2 text-slate-800">
+                  <div className="bg-primary text-white p-1.5 rounded-lg shadow-sm"><Building2 className="h-4 w-4" /></div>
+                  Dados do Estúdio
+                </CardTitle>
+                <CardDescription className="text-[10px] font-medium text-slate-500">Informações básicas do seu estúdio</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 {[
@@ -890,12 +1020,13 @@ export default function SettingsPage() {
             </Card>
 
             {/* Pix Config (Manual) */}
-            <Card>
+            <Card className="border-none shadow-xl bg-white/40 backdrop-blur-md">
               <CardHeader>
-                <CardTitle className="text-base flex items-center gap-2">
-                  <Smartphone className="h-4 w-4 text-primary" /> Configuração do Pix (Transferência Direta)
+                <CardTitle className="text-sm font-black uppercase tracking-tighter flex items-center gap-2 text-slate-800">
+                  <div className="bg-primary text-white p-1.5 rounded-lg shadow-sm"><Smartphone className="h-4 w-4" /></div>
+                  Configuração do Pix
                 </CardTitle>
-                <CardDescription>Configure sua chave Pix para exibição manual (não automatizada) no sistema</CardDescription>
+                <CardDescription className="text-[10px] font-medium text-slate-500">Chave Pix para exibição manual no sistema</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
@@ -975,12 +1106,14 @@ export default function SettingsPage() {
             </Card>
           </TabsContent>
 
-          {/* ===== REGRAS ===== */}
           <TabsContent value="regras" className="space-y-6 max-w-2xl">
-            <Card>
+            <Card className="border-none shadow-xl bg-white/40 backdrop-blur-md">
               <CardHeader>
-                <CardTitle className="text-base">Regras de Agendamento</CardTitle>
-                <CardDescription>Configure limites e prazos do sistema</CardDescription>
+                <CardTitle className="text-sm font-black uppercase tracking-tighter flex items-center gap-2 text-slate-800">
+                  <div className="bg-primary text-white p-1.5 rounded-lg shadow-sm"><CalendarCog className="h-4 w-4" /></div>
+                  Regras de Agendamento
+                </CardTitle>
+                <CardDescription className="text-[10px] font-medium text-slate-500">Configure limites e prazos do sistema</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
@@ -1045,15 +1178,15 @@ export default function SettingsPage() {
             <FinancialRulesCard />
           </TabsContent>
 
-          {/* ===== AUTOMAÇÃO ===== */}
           <TabsContent value="automacao" className="space-y-6 max-w-2xl">
             {/* Regras de Pós-Venda */}
-            <Card>
+            <Card className="border-none shadow-xl bg-white/40 backdrop-blur-md">
               <CardHeader>
-                <CardTitle className="text-base flex items-center gap-2">
-                  <Zap className="h-4 w-4 text-primary" /> Automação Pós-Venda
+                <CardTitle className="text-sm font-black uppercase tracking-tighter flex items-center gap-2 text-slate-800">
+                  <div className="bg-indigo-500 text-white p-1.5 rounded-lg shadow-sm"><Zap className="h-4 w-4" /></div>
+                  Automação Pós-Venda
                 </CardTitle>
-                <CardDescription>Configure gatilhos automáticos após a matrícula</CardDescription>
+                <CardDescription className="text-[10px] font-medium text-slate-500">Configure gatilhos automáticos após a matrícula</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-4">
@@ -1101,12 +1234,13 @@ export default function SettingsPage() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="border-none shadow-xl bg-white/40 backdrop-blur-md">
               <CardHeader>
-                <CardTitle className="text-base flex items-center gap-2">
-                  <Zap className="h-4 w-4 text-primary" /> Automação e Notificações
+                <CardTitle className="text-sm font-black uppercase tracking-tighter flex items-center gap-2 text-slate-800">
+                  <div className="bg-indigo-500 text-white p-1.5 rounded-lg shadow-sm"><Zap className="h-4 w-4" /></div>
+                  Automação e Notificações
                 </CardTitle>
-                <CardDescription>Configure quando o sistema deve enviar mensagens automáticas</CardDescription>
+                <CardDescription className="text-[10px] font-medium text-slate-500">Configure quando o sistema deve enviar mensagens automáticas</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
 
@@ -1160,17 +1294,20 @@ export default function SettingsPage() {
             </Card>
 
             {/* WhatsApp Templates */}
-            <Card>
+            <Card className="border-none shadow-xl bg-white/40 backdrop-blur-md">
               <CardHeader>
-                <CardTitle className="text-base flex items-center gap-2">
-                  <MessageCircle className="h-4 w-4 text-primary" /> Templates de WhatsApp
+                <CardTitle className="text-sm font-black uppercase tracking-tighter flex items-center gap-2 text-slate-800">
+                  <div className="bg-indigo-500 text-white p-1.5 rounded-lg shadow-sm"><MessageCircle className="h-4 w-4" /></div>
+                  Templates de WhatsApp
                 </CardTitle>
-                <CardDescription>Personalize o texto dos lembretes de pagamento</CardDescription>
+                <CardDescription className="text-[10px] font-medium text-slate-500">Personalize o texto dos lembretes de pagamento</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label>Boas-vindas (Nova Matrícula)</Label>
+                  <Label htmlFor="whatsapp-welcome">Boas-vindas (Nova Matrícula)</Label>
                   <textarea
+                    id="whatsapp-welcome"
+                    title="Template de mensagem de boas-vindas"
                     className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     value={getValue("automacao.whatsapp_welcome") || "Olá [nome]! Bem-vindo(a) ao [studio_nome]. Sua matrícula foi realizada com sucesso! 🎉"}
                     onChange={(e) => setValue("automacao.whatsapp_welcome", e.target.value)}
@@ -1178,8 +1315,10 @@ export default function SettingsPage() {
                   <p className="text-[10px] text-muted-foreground">Variáveis: [nome], [studio_nome]</p>
                 </div>
                 <div className="space-y-2">
-                  <Label>Lembrete (Dia do Vencimento)</Label>
+                  <Label htmlFor="whatsapp-lembrete">Lembrete (Dia do Vencimento)</Label>
                   <textarea
+                    id="whatsapp-lembrete"
+                    title="Template de mensagem de lembrete"
                     className="flex min-h-[100px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     value={getValue("automacao.whatsapp_lembrete") || "Olá [nome], passando para lembrar que sua mensalidade de [valor] vence hoje. Segue link: [link]"}
                     onChange={(e) => setValue("automacao.whatsapp_lembrete", e.target.value)}
@@ -1187,8 +1326,10 @@ export default function SettingsPage() {
                   <p className="text-[10px] text-muted-foreground">Variáveis: [nome], [valor], [vencimento], [link]</p>
                 </div>
                 <div className="space-y-2">
-                  <Label>Aviso de Atraso Crítico (7+ dias)</Label>
+                  <Label htmlFor="whatsapp-atraso">Aviso de Atraso Crítico (7+ dias)</Label>
                   <textarea
+                    id="whatsapp-atraso"
+                    title="Template de mensagem de atraso crítico"
                     className="flex min-h-[100px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     value={getValue("automacao.whatsapp_delay_critical") || "Olá [nome], notamos que sua mensalidade de [valor] está com mais de 7 dias de atraso. Por favor, regularize assim que possível: [link]"}
                     onChange={(e) => setValue("automacao.whatsapp_delay_critical", e.target.value)}
@@ -1196,8 +1337,10 @@ export default function SettingsPage() {
                   <p className="text-[10px] text-muted-foreground">Variáveis: [nome], [valor], [vencimento], [link]</p>
                 </div>
                 <div className="space-y-2">
-                  <Label>Parabéns (Aniversário)</Label>
+                  <Label htmlFor="whatsapp-birthday">Parabéns (Aniversário)</Label>
                   <textarea
+                    id="whatsapp-birthday"
+                    title="Template de mensagem de aniversário"
                     className="flex min-h-[100px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     value={getValue("automacao.whatsapp_birthday") || "Parabéns, [nome]! 🎉 Toda a equipe do [studio_nome] te deseja um dia incrível e cheio de dança!"}
                     onChange={(e) => setValue("automacao.whatsapp_birthday", e.target.value)}
@@ -1211,17 +1354,20 @@ export default function SettingsPage() {
             </Card>
 
             {/* Contract Template */}
-            <Card>
+            <Card className="border-none shadow-xl bg-white/40 backdrop-blur-md">
               <CardHeader>
-                <CardTitle className="text-base flex items-center gap-2">
-                  <FileSignature className="h-4 w-4 text-primary" /> Modelo de Contrato Padrão
+                <CardTitle className="text-sm font-black uppercase tracking-tighter flex items-center gap-2 text-slate-800">
+                  <div className="bg-indigo-500 text-white p-1.5 rounded-lg shadow-sm"><FileSignature className="h-4 w-4" /></div>
+                  Modelo de Contrato Padrão
                 </CardTitle>
-                <CardDescription>Texto base usado para gerar novos contratos</CardDescription>
+                <CardDescription className="text-[10px] font-medium text-slate-500">Texto base usado para gerar novos contratos</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label>Corpo do Contrato</Label>
+                  <Label htmlFor="contrato-template">Corpo do Contrato</Label>
                   <textarea
+                    id="contrato-template"
+                    title="Modelo de texto para contratos"
                     className="flex min-h-[300px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 font-serif"
                     value={getValue("automacao.contrato_template") || "CONTRATO DE PRESTAÇÃO DE SERVIÇOS\n\nContratado: [estudio_nome]\nContratante: [aluno_nome], CPF: [aluno_cpf]\nPlano: [plano_nome]\nValor: [plano_valor]\nTaxa de Matrícula: [taxa_matricula]\n\n..." }
                     onChange={(e) => setValue("automacao.contrato_template", e.target.value)}
