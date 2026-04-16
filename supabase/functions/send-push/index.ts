@@ -92,34 +92,68 @@ serve(async (req) => {
   }
 });
 
-/**
- * Basic implementation of Google OAuth2 for Deno
- * (Alternative: use 'https://deno.land/x/google_oauth2_client/mod.ts')
- */
-async function getAccessToken(serviceAccount: any): Promise<string> {
-    const { client_email, private_key } = serviceAccount;
-    
-    // We would normally use a library here like 'google-auth-library' equivalent for Deno
-    // Since this is a self-hosted VPS, we'll assume the user sets the token or we use a simple JWT sign.
-    // For the sake of the task, I will provide the core logic.
-    
-    const header = { alg: "RS256", typ: "JWT" };
-    const now = Math.floor(Date.now() / 1000);
-    const claim = {
-      iss: client_email,
-      scope: "https://www.googleapis.com/auth/cloud-messaging",
-      aud: "https://oauth2.googleapis.com/token",
-      exp: now + 3600,
-      iat: now,
-    };
+// --- GOOGLE AUTH HELPERS ---
 
-    // Need to sign with private_key. In Deno, we use CryptoKey.
-    // This part is omitted for brevity but required for full functionality.
-    // I will use a placeholder or suggest using a library.
-    
-    // For now, let's assume we use a library or the user provides a pre-signed token
-    // Actually, I'll implement a robust way if possible.
-    
-    // Placeholder for actual signing logic
-    return "ACCESS_TOKEN_PLACEHOLDER"; 
+async function getAccessToken(serviceAccount: any): Promise<string> {
+  const { client_email, private_key } = serviceAccount;
+  const header = b64UrlEncode(JSON.stringify({ alg: "RS256", typ: "JWT" }));
+  const now = Math.floor(Date.now() / 1000);
+  const claim = b64UrlEncode(JSON.stringify({
+    iss: client_email,
+    scope: "https://www.googleapis.com/auth/cloud-messaging",
+    aud: "https://oauth2.googleapis.com/token",
+    exp: now + 3600,
+    iat: now,
+  }));
+
+  const signature = await sign(`${header}.${claim}`, private_key);
+  const jwt = `${header}.${claim}.${signature}`;
+
+  const res = await fetch("https://oauth2.googleapis.com/token", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: `grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=${jwt}`,
+  });
+
+  const data = await res.json();
+  if (data.error) throw new Error(`OAuth Error: ${data.error_description || data.error}`);
+  return data.access_token;
+}
+
+function b64UrlEncode(str: string): string {
+  const bin = new TextEncoder().encode(str);
+  return btoa(String.fromCharCode(...bin))
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=/g, "");
+}
+
+async function sign(text: string, pem: string): Promise<string> {
+  const pemHeader = "-----BEGIN PRIVATE KEY-----";
+  const pemFooter = "-----END PRIVATE KEY-----";
+  const pemContents = pem.substring(pemHeader.length, pem.length - pemFooter.length).replace(/\s/g, "");
+  const binaryDerString = atob(pemContents);
+  const binaryDer = new Uint8Array(binaryDerString.length);
+  for (let i = 0; i < binaryDerString.length; i++) {
+    binaryDer[i] = binaryDerString.charCodeAt(i);
+  }
+
+  const key = await crypto.subtle.importKey(
+    "pkcs8",
+    binaryDer.buffer,
+    { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
+    false,
+    ["sign"],
+  );
+
+  const sig = await crypto.subtle.sign(
+    "RSASSA-PKCS1-v1_5",
+    key,
+    new TextEncoder().encode(text),
+  );
+
+  return btoa(String.fromCharCode(...new Uint8Array(sig)))
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=/g, "");
 }
