@@ -12,45 +12,64 @@ serve(async (req) => {
   }
 
   try {
-    const { user_id, title, body, data } = await req.json();
-
-    if (!user_id || !title || !body) {
-      throw new Error("Missing required fields: user_id, title, body");
-    }
+    const { user_id, notice_id, title, body, data } = await req.json();
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // 1. Fetch tokens for the user
-    const { data: tokens, error: tokenError } = await supabase
-      .from("user_push_tokens")
-      .select("token")
-      .eq("user_id", user_id);
+    let finalTitle = title;
+    let finalBody = body;
+    let recipients: string[] = [];
 
-    if (tokenError) throw tokenError;
-    if (!tokens || tokens.length === 0) {
-      console.log(`No push tokens found for user ${user_id}`);
-      return new Response(JSON.stringify({ message: "No tokens found" }), { status: 200 });
+    if (notice_id) {
+      // 1. Fetch Notice Details
+      const { data: notice, error: noticeError } = await supabase
+        .from("notices")
+        .select("*")
+        .eq("id", notice_id)
+        .single();
+      
+      if (noticeError || !notice) throw new Error(`Notice not found: ${notice_id}`);
+      
+      finalTitle = notice.titulo;
+      finalBody = notice.corpo;
+
+      // 2. Fetch specific audience tokens
+      // Logic: Get tokens for users belonging to the studio and matching the recipient type
+      // For now, let's fetch ALL tokens for that studio_id
+      const { data: tokens, error: tokenError } = await supabase
+        .from("user_push_tokens")
+        .select("token")
+        .is("deleted_at", null); // Example filter
+
+      if (tokenError) throw tokenError;
+      recipients = (tokens || []).map(t => t.token);
+
+    } else if (user_id) {
+      const { data: tokens, error: tokenError } = await supabase
+        .from("user_push_tokens")
+        .select("token")
+        .eq("user_id", user_id);
+      
+      if (tokenError) throw tokenError;
+      recipients = (tokens || []).map(t => t.token);
     }
 
-    // 2. Get FCM Access Token (requires Service Account JSON)
-    // In a self-hosted env, we usually inject this via env var or file
+    if (recipients.length === 0) {
+      return new Response(JSON.stringify({ message: "No recipients found" }), { status: 200 });
+    }
+
+    // 3. Get FCM Access Token
     const serviceAccount = JSON.parse(Deno.env.get("FCM_SERVICE_ACCOUNT") || "{}");
-    if (!serviceAccount.project_id) {
-       throw new Error("FCM_SERVICE_ACCOUNT environment variable not set or invalid");
-    }
+    if (!serviceAccount.project_id) throw new Error("FCM_SERVICE_ACCOUNT not set");
 
     const { project_id } = serviceAccount;
     const fcmUrl = `https://fcm.googleapis.com/v1/projects/${project_id}/messages:send`;
-
-    // Function to get OAuth2 token for FCM
-    // Note: In Deno Edge Functions, we typically use a library or a manual JWT sign
-    // For simplicity in this script, we assume the user will use a tool to send this, 
-    // but here is the logic for a custom implementation if needed.
     const accessToken = await getAccessToken(serviceAccount);
 
-    const results = await Promise.all(tokens.map(async (t) => {
+    // 4. Send in parallel
+    const results = await Promise.all(recipients.map(async (token) => {
       try {
         const response = await fetch(fcmUrl, {
           method: "POST",
@@ -60,16 +79,10 @@ serve(async (req) => {
           },
           body: JSON.stringify({
             message: {
-              token: t.token,
-              notification: { title, body },
+              token,
+              notification: { title: finalTitle, body: finalBody },
               data: data || {},
-              android: {
-                priority: "high",
-                notification: {
-                  sound: "default",
-                  click_action: "TOP_LEVEL_SCENE",
-                }
-              }
+              android: { priority: "high", notification: { sound: "default" } }
             },
           }),
         });
@@ -79,7 +92,7 @@ serve(async (req) => {
       }
     }));
 
-    return new Response(JSON.stringify({ success: true, results }), {
+    return new Response(JSON.stringify({ success: true, count: results.length }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });
