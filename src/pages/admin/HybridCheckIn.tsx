@@ -109,7 +109,7 @@ export default function HybridCheckIn() {
                 >
                   <div>
                     <p className="text-[10px] font-black uppercase tracking-widest opacity-60 mb-1">
-                      {t.horario_inicio.substring(0, 5)} - {t.horario_fim.substring(0, 5)}
+                      {t.horario_inicio?.substring(0, 5)} - {t.horario_fim?.substring(0, 5) || "--:--"}
                     </p>
                     <h3 className="font-bold text-sm truncate max-w-[180px]">{t.nome || t.modalities?.nome}</h3>
                   </div>
@@ -156,7 +156,7 @@ export default function HybridCheckIn() {
                              "h-10 w-10 rounded-full flex items-center justify-center font-black text-xs",
                              a.type === "Fixo" ? "bg-slate-100 text-slate-400" : "bg-amber-100 text-amber-600"
                            )}>
-                             {a.nome.substring(0, 2).toUpperCase()}
+                             {a.nome?.substring(0, 2).toUpperCase() || "??"}
                            </div>
                            <div>
                              <p className="font-bold text-slate-900">{a.nome}</p>
